@@ -545,14 +545,11 @@ def major_damage( # this function permanaently alters the default std_dev of the
             new_dev = current_dev + (current_dev*0.02)
             dict_value["std_dev"] = new_dev # set part production running vars to the new std_dev
     
-    tool_break_chance = machine_attributes["breakdown_table"]["t_b"]["chance"] 
-    tool_break_chance = tool_break_chance + tool_break_chance * 0.1 # increase chances of tool breaking by 10%
-    machine_attributes["breakdown_table"]["t_b"]["chance"] = tool_break_chance 
+    
+    machine_attributes["breakdown_table"]["t_b"]["chance"] *= 1.1 # increase chances of tool breaking by 10%
     machine_attributes["breakdown_table"]["t_b"]["repair_difficulty"] += 5 #increase repair difficulty by 5. If repair_difficulty exceeds 100 then it will no longer be repairable.
     
-    loose_lever_chance = machine_attributes["breakdown_table"]["s_d"]["chance"] 
-    loose_lever_chance = loose_lever_chance + loose_lever_chance*0.1 # increase chances of tool breaking by 10%
-    machine_attributes["breakdown_table"]["s_d"]["chance"] = loose_lever_chance 
+    machine_attributes["breakdown_table"]["s_d"]["chance"] *= 1.1 # increase chances of process drift by 10%
     machine_attributes["breakdown_table"]["s_d"]["repair_difficulty"] += 5 #increase repair difficulty by 5. If repair_difficulty exceeds 100 then it will no longer be repairable.
 
     breakdown_hz += 1 # incrementing by 1 will slowly make the machine unfit to run as errors keep happening. it represents the machine "falling apart"
