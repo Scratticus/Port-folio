@@ -1,19 +1,37 @@
-# I have spent some years working on factories, building factory stock management systems and analysing SQL data to simulate a factory OS system for production planning
-# I always used to use excel vba to ping SQL queries off of SQL databases and Access databases, this document is written in python a language which I will be learning over the next 3 months
-# for now this is just pure python, with a few comments to highlight further iterations that I wish to make to the code.
+05-Oct-2023 Update:
 
-# when run you will follow the adventures of Kevin as he tries to operate machine - MC001. Kevin is my father-in-laws name.
-# The machine will normally produce an SQL update string every cycle to represent part throughput, but it will occasioanlly break down
-# Kevin will try to keep up with maintenance and repairs, but ultimately he will fail, unless he can learn more skills quickly!
-# Kevin gains more skills by successfully completing repairs to a very high standard, however if he fumbles difficulties rise and so do breakdown occurences.
+The course has revealed so much knowledge to me and I am keen to make updates to this project to reflect 
+the new skills I have developed, however the course is also very demanding and for the time being I will 
+need to focus on the modules to complete the course successfully. I look forward to going back through the 
+code with new priorities, as I will now first make sure that my code obeys python pep8 formatting rules 
+and I may also add some classes to define machines and operators. Then I will work on integrating the SQL 
+elements and multithreading/ multiprocessing the functions
 
-# I started off figuring out how to string functions together, but found that many values I wanted to hold sacred were getting changed by the code.
-# This iteration has focused on dictionary definition, being careful where I link dictionaries directly and where I make copies and learning the intricacies of which methods can be used on which variable types
-# I decided to make it a little fairer on Kevin and added a high score system - There is no skill here its a random chance.
+-----------------------------------
 
-# I start my Data_science course on the 12/9/2023 and in the 11 days before then, 
-# I hope to break this code down and add threads to it to have multiple operators working on multiple machines at one time
-# I also have a spare hard drive which I will be creating an SQL server on to practice my database set up, reference and updating skills.
-# after I start my course I look forward to seeing what else I could add to this project!
+I have spent some years working on factories, building factory stock management systems and analysing SQL 
+data to simulate a factory OS system for production planning.
 
-# to play with this code, unhash the machine_temp_vars tables to see different start up conditions and change kevins abilities in the operators table.
+I always used to use excel vba to ping SQL queries off of SQL databases and Access databases, this document 
+is written in python a language which I will be learning over the next 3 months for now this is just pure 
+python, with a few comments to highlight further iterations that I wish to make to the code.
+
+when run you will follow the adventures of Kevin as he tries to operate machine - MC001. The machine will
+normally produce an SQL update string every cycle to represent part throughput, but it will occasioanlly 
+break down. Kevin will try to keep up with maintenance and repairs, but ultimately he will fail, unless he 
+can learn more skills quickly! Kevin gains more skills by successfully completing repairs to a very high 
+standard, however if he fumbles difficulties rise and so do breakdown occurences.
+
+I started off figuring out how to string functions together, but found that many values I wanted to hold 
+sacred were getting changed by the code. This iteration has focused on dictionary definition, being careful 
+where I link dictionaries directly and where I make copies and learning the intricacies of which methods can 
+be used on which variable types. I decided to make it a little fairer on Kevin and added a high score system. 
+There is no skill here its a random chance.
+
+I start my Data_science course on the 12/9/2023 and in the 11 days before then, I hope to break this code down 
+and add threads to it to have multiple operators working on multiple machines at one time. I also have a spare 
+hard drive which I will be creating an SQL server on to practice my database set up, reference and updating 
+skills. After I start my course I look forward to seeing what else I could add to this project!
+
+To play with this code, unhash the machine_temp_vars tables to see different start up conditions and change 
+Kevin's abilities in the operators table.
