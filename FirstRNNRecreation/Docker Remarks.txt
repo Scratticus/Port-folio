@@ -1,0 +1,241 @@
+Step 1:
+
+    Ran code to pull API image and hosted image on docker container.
+
+    Next used Docker ps to list containers and docker inspect to identify the IP address
+
+    ID: b58480c6162e
+    IP Address: 172.17.0.2
+    Ports: 0.0.0.0:8000->8000/tcp
+
+    ran "curl http://172.17.0.2:8000/docs"
+
+    Expected results: information RE entry points.
+    Result:
+    <!DOCTYPE html>
+        <html>
+        <head>
+        <link type="text/css" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swagger-ui-dist@3/swagger-ui.css">
+        <link rel="shortcut icon" href="https://fastapi.tiangolo.com/img/favicon.png">
+        <title>FastAPI - Swagger UI</title>
+        </head>
+        <body>
+        <div id="swagger-ui">
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/swagger-ui-dist@3/swagger-ui-bundle.js"></script>
+        <!-- `SwaggerUIBundle` is now available on the page -->
+        <script>
+        const ui = SwaggerUIBundle({
+            url: '/openapi.json',
+        oauth2RedirectUrl: window.location.origin + '/docs/oauth2-redirect',
+            dom_id: '#swagger-ui',
+            presets: [
+            SwaggerUIBundle.presets.apis,
+            SwaggerUIBundle.SwaggerUIStandalonePreset
+            ],
+            layout: "BaseLayout",
+            deepLinking: true,
+            showExtensions: true,
+            showCommonExtensions: true
+        })
+        </script>
+        </body>
+        </html>
+
+        Results differ from expectation.
+
+        Tried "curl http://172.17.0.2:8000/status" - 1 - API is running, the API is working.
+
+Step 2: Summarised tests to be completed:
+
+    I will use suggestsed tests using os and requests.
+
+    Test 1 - permissions test: 
+        endpoint: http://172.17.0.2:8000/permissions
+        a. 
+            Input params:
+                "username": "alice", 
+                "password": "wonderland"
+            Expected output: 
+                Status code 200
+        b. 
+            Input params: 
+            endpoint: http://172.17.0.2:8000/permissions
+                "username": "bob", 
+                "password": "builder"
+            Expected output: 
+                Status code 200
+        c. 
+            Input params: 
+                "username": "clementine", 
+                "password": "mandaine",
+            Expected output: 
+                Status code 403
+
+    Test 2. - Auth test
+        endpoint: http://172.17.0.2:8000/v1/sentiment
+        a. 
+            Input params:
+                "username": "alice", 
+                "password": "wonderland"
+                "sentence": "life is beautiful" 
+            Expected Output:
+                1
+        b. 
+            Input params:
+                "username": "bob", 
+                "password": "builder"
+                "sentence": "life is beautiful"
+            Expected Output:
+                1
+        endpoint: http://172.17.0.2:8000/v2/sentiment
+        a. 
+            Input params:
+                "username": "alice", 
+                "password": "wonderland"
+                "sentence": "life is beautiful"
+            Expected Output:
+                1
+        b. 
+            Input params:
+                "username": "bob", 
+                "password": "builder"
+                "sentence": "life is beautiful"
+            Expected Output:
+                {"detail":"Authentication failed"}
+
+    Test 3. - content test
+        endpoint: http://172.17.0.2:8000/v1/sentiment
+        a. 
+            Input params:
+                "username": "alice", 
+                "password": "wonderland"
+                "sentence": "life is beautiful"
+            Expected Output:
+                1
+        b. 
+            Input params:
+                "username": "alice", 
+                "password": "wonderland"
+                "sentence": "that sucks"
+            Expected Output:
+                -1
+        endpoint: http://172.17.0.2:8000/v2/sentiment
+        a. 
+            Input params:
+                "username": "alice", 
+                "password": "wonderland"
+                "sentence": "life is beautiful"
+            Expected Output:
+                1
+        b. 
+                        Input params:
+                "username": "alice", 
+                "password": "wonderland"
+                "sentence": "that sucks"
+            Expected Output:
+                -1
+
+Step 3. Construct test python files.
+
+    Files created in docker_exam folder:
+        perm_test.py
+        auth_test.py
+        cont_test.py
+        api_test.log
+
+    Tested suggested code:
+        Found following issues and amended:
+            log_path not reading correctly, updated to be defined from os commands
+            content variables are fixed, updating to relate to environment variables.
+            mild spelling updates
+            found that logs were recording curly brackets instead of variable values. rectified.
+            issue with os.environ.get('LOG') returning a string, rectified with int()
+        Perm tests - tested and operational without Docker
+            Uses ENV variables:
+                USERNAME
+                PASSWORD
+                LOG
+        Copied code and modified for auth tests - tested and operational without Docker
+            Uses ENV variables:
+                USERNAME
+                PASSWORD
+                LOG
+                CONTENT
+        modified code for cont tests - tested and operational without Docker
+            Uses ENV variables:
+                USERNAME
+                PASSWORD
+                LOG
+                CONTENT
+                POSITIVE
+    I am satisfied that these test files work as intended and they write to a log file from a relative path.
+
+Step 4. Docker Implementation
+    I want the Docker Implementation to be entirely automated, ideally a user would simply extract files and run setup.sh and
+    everything else will happen automatically.
+
+    To run the tests on an automatic container I will need an execution file that sets environmental variables
+    and runs the python test files for each set of variables.
+
+    Once this execution file is working, I can set up a Dockerfile and as part of that Dockerfile I can set a shared volume
+    for logs so that all tests update the same log file. I will need to ensure that the relative path is set from the workdir
+    in the test files before I make them into a dockerfile.
+    I should also include a check to ensure that the logs dir exists in the setup.sh and create one if necessary.
+
+    I should test the test_start.sh file on the API manually, before creating the Dockerfile.
+
+    Once I have the tested files collated in a dockerfile for each test, I can create a docker-compose.yml
+    which will start the API in a container and then I can set the shared logs in the yml. So actually I don't need to 
+    set the shared volume in the Dockerfile, as this will be handled by the docker compose yml. However if I do include 
+    them then the shared logs will be utilized even if the Dockerfile is run without the docker-compose.yml so I may
+    as well include the VOLUME definition in the Dockerfile.
+
+    The Dockerfile images, start.sh files and logs should be converted to tar files to save space, these can then be extracted
+    and ran from the main setup.sh and docker-compose.yml
+
+    The docker-compose.yml needs to initialize the API and the 3 test containers and specify the shared volumes.
+
+    The setup.sh needs to define an environmental variable for the machine IP adress for all files to reference.
+    It needs to compose the yml file.
+    The setup.sh should also close the Containers once testing is complete to save compute time and space.
+    Optionally, the setup.sh could move existing logs to an archive file and clear logs to enable concise troubleshooting.
+
+    Tasks:
+
+    update test .py files to reference shared log directory. done
+    Ensure test titles specify which operation is being tested. done
+    create test_start.sh files to accompany each test.py file. 
+    Test  test_start.sh files on manual API.
+    Create Dockerfile for each Test.
+    Create docker-compose.yml initiating all 4 containers and shared volumes.
+    Create setup.sh file to execute yml and manage logs.
+    Save all files as a tar file.
+
+    File Structure:
+    DockerExam - extracted from tar file
+        |- setup.sh
+        |- docker-compose.yml
+        |- remarks.text
+        |- README.txt
+        |- dockerfiles/
+            |- perms_image
+            |- auth_image
+            |- cont_image
+        |- logs/
+            |- api_test.log
+            |- archive/
+                |- api_test_ddmmyyyy_hhmmsss
+        |- docker_file_contents
+            |- permissions_test/
+                |- perms_test.py
+                |- perms_test_start.sh
+            |- authorization_test/
+                |- auth_test.py
+                |- auth_test.start.sh
+            |- function_test/
+                |- func_test.py
+                |- func_test_start.sh
+
+
+        
